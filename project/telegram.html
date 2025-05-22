@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="google-adsense-account" content="ca-pub-1142019306541908">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta property="og:title" content="iton5 LAE TH">
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="Telegram Chat for LIFF">
+  <meta property="og:url" content="https://www.facebook.com/stickerlinebyiton5">
+  <meta property="og:site_name" content="Telegram Chat for LIFF">
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1FldOWgeB9OqhFP3CLKT3S-rjTyFCufnk">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" /> 
+    <style type="text/css"> 
+        body { 
+            font-family: 'line_seed_sans_th'; 
+        } 
+ 
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <title id="title">Telegram Chat for LIFF</title>
+</head>
+  <body class="bg-gray-100 text-gray-800">
+
+  <div class="max-w-5xl mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4 text-center">🤖 Telegram ChatBot for LIFF</h1>
+
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- User List -->
+      <div class="md:w-1/4 bg-white p-4 rounded shadow h-64 md:h-[500px] overflow-y-auto">
+        <h2 class="font-semibold mb-2">👥 Users</h2>
+        <div id="userList" class="space-y-2 text-sm"></div>
+      </div>
+
+      <!-- Chat Section -->
+      <div class="md:w-3/4 bg-white p-4 rounded shadow flex flex-col h-[500px]">
+        <div id="chatBox" class="flex-1 overflow-y-auto space-y-2 mb-3 border p-2 rounded bg-gray-50">แชทจากผู้ใช้งาน</div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="messageInput" type="text" class="flex-1 border px-3 py-2 rounded" placeholder="Select a user to reply..." />
+          <button id="sendButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ส่ง</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            var liffId = "2007195768-M4nxRVPB";
+            initializeLiff(liffId);
+           
+        })
+
+        function initializeLiff(liffId) {
+            liff
+                .init({
+                    liffId: liffId,
+                    withLoginOnExternalBrowser: true,
+                })
+                .then(() => {
+                    if (!liff.isInClient() && !liff.isLoggedIn()) {
+                        window.alert("กรุณาเข้าสู่ระบบบัญชี LINE ของคุณ");
+                        liff.login({ redirectUri: location.href });
+
+                    }
+                    liff.ready.then(() => {
+                      liff.getProfile()
+  .then((profile) => {
+    const name = profile.displayName;
+    const userId = profile.userId;
+    const params = (new URL(document.location)).searchParams;
+    const key = params.get("key");
+    document.getElementById("title").textContent = "สวัสดีคุณ " + name
+                       
+    sendToGoogleSheet(userId, name, key)
+  })
+  .catch((err) => {
+    console.log("error", err);
+  });
+                      
+                     
+                       
+                    });
+              liff.permission.query("profile").then((permissionStatus) => {
+  if (permissionStatus.state === "prompt") {
+    liff.permission.requestAll();
+  }
+});
+
+                })
+                .catch((err) => {
+                    console.log('LIFF Initialization failed ', err);
+                });
+        }
+      
+      
+      
+   const botToken = '7521850140:AAHwjaeornVxbLPhkSMrpIiKSR70zt0Rns0'; 
+    const apiBase = `https://api.telegram.org/bot${botToken}`;
+
+    const chatBox = document.getElementById('chatBox');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const userList = document.getElementById('userList');
+
+    let selectedChatId = null;
+    let lastUpdateId = 0;
+    const chatUsers = new Map(); 
+
+    sendButton.addEventListener('click', async () => {
+      const message = messageInput.value.trim();
+      if (!message || !selectedChatId) return;
+
+      try {
+        await fetch(`${apiBase}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: selectedChatId,
+            text: liff.getDecodedIDToken().name + ": " + message
+          })
+        });
+
+        chatBox.innerHTML += `
+          <div class="text-right">
+            <div class="inline-block bg-blue-100 text-blue-800 px-3 py-2 rounded-lg">
+              <strong>${liff.getDecodedIDToken().name}:</strong> ${message}
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (err) {
+        chatBox.innerHTML += `<div class="text-red-500">❌ ${err.message}</div>`;
+      }
+
+      messageInput.value = '';
+    });
+
+    async function fetchMessages() {
+      try {
+        const res = await fetch(`${apiBase}/getUpdates?offset=${lastUpdateId + 1}`);
+        const data = await res.json();
+
+        data.result.forEach(update => {
+          const msg = update.message;
+          if (!msg || !msg.chat || !msg.text) return;
+
+          const chatId = msg.chat.id;
+          const name = msg.from.first_name || 'User';
+          const isBot = msg.from.is_bot;
+          const text = msg.text;
+
+          if (!chatUsers.has(chatId)) {
+            chatUsers.set(chatId, name);
+            renderUserList();
+          }
+
+          chatBox.innerHTML += `
+            <div class="text-left">
+              <div class="inline-block bg-gray-200 text-gray-900 px-3 py-2 rounded-lg">
+                <strong>${isBot ? '🤖 Bot' : `👤 ${name}`}:</strong> ${text}
+              </div>
+            </div>
+          `;
+
+          chatBox.scrollTop = chatBox.scrollHeight;
+          lastUpdateId = update.update_id;
+        });
+      } catch (err) {
+        chatBox.innerHTML += ``;
+      }
+    }
+
+    function renderUserList() {
+      userList.innerHTML = '';
+      chatUsers.forEach((name, id) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded';
+        btn.innerText = `${name} (${id})`;
+        btn.onclick = () => {
+          selectedChatId = id;
+          messageInput.placeholder = `Reply to ${name}`;
+        };
+        userList.appendChild(btn);
+      });
+    }
+
+    setInterval(fetchMessages, 2000);
+    fetchMessages();
+  
+ 
+      function sendMessages(messages) {
+        if (!liff.isInClient()) {
+           Swal.fire("ผิดพลาด", "โปรดใช้เฉพาะมือถือเท่านั้น", "error")
+            console.error("LIFF is not opened inside the LINE app.");
+            return;
+        }
+
+        liff.sendMessages(messages)
+            .then(() => {
+                Swal.fire({
+                    title: "🎉ดำเนินการสำเร็จ🎉",
+                    text: "ทำการส่ง Message เรียบร้อย",
+                    icon: "success",
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    liff.closeWindow();
+                });
+            })
+            .catch(error => {
+                console.error("Failed to send message:", error);
+                Swal.fire("เกิดข้อผิดพลาด!", "โปรดลองใหม่อีกครั้ง", "error")
+                    .then(() => liff.closeWindow());
+            });
+    }
+      
+      function shareMessages(messages) {
+       
+
+        liff.shareTargetPicker(messages).then(function (res) {
+    if (res) {
+        Swal.fire({
+                    title: "ดำเนินการสำเร็จ ✔️",
+                    text: "ทำการ Share Message เรียบร้อย",
+                    icon: "success",
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    liff.closeWindow();
+                });
+    } else {
+     
+      console.log("TargetPicker was closed!");
+    }
+  })
+  .catch(function (error) {
+    
+    console.log("something wrong happen");
+          Swal.fire("เกิดข้อผิดพลาด!", "โปรดลองใหม่อีกครั้ง", "error")
+                    .then(() => liff.closeWindow());
+  });
+           
+    }
+      
+
+    </script>
+ 
+</body>
+</html>
