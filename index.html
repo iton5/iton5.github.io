@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Card Message</title>
+</head>
+<link rel="stylesheet" href="https://bit.ly/3CZa0Sz
+" type="text/css" charset="utf-8" />
+<style type="text/css">
+   body {
+       font-family: 'line_seed_sans_th';
+  }
+ {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  overflow: hidden;
+  
+  border-radius: 1rem;
+  padding-block: 0.5rem;
+  margin-block: 5rem;
+  display: block;
+  width: 40%;
+  margin-inline: auto;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.image-placeholder {
+  margin: 0.5rem;
+  width: auto;
+  height: 10rem;
+  background: url('https://motionarray.imgix.net/preview-1078342-8tJlpaTdPa-high_0000.jpg?w=660&q=60&fit=max&auto=format'); 
+  background-size: contain;
+  border-radius: 1rem;
+  display: block;
+  
+  animation: slide 50s linear infinite;
+}
+
+.content-placeholder > * {
+  margin: 1rem;
+  text-align: justify;
+} 
+
+
+
+.card-button {
+  margin-right: 1rem;
+  color: white;
+  border: solid 5px #4f4f4e;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  margin-left: auto;
+  display: flex;
+  border-radius: 10rem;
+  background: #017120;
+  
+  width: 8.45rem;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  transition: all 1s;
+}
+
+.button-content {
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 300;
+  padding-top: 3px;
+}
+
+.card-button:hover {
+  width: 9rem;
+  cursor: pointer;
+}
+
+.image-placeholder img {
+  position: absolute;
+}
+
+#img-1 {
+  top: 1rem;
+  left: 10%;
+  width: 11rem;
+  transform: scaleX(-1);
+  animation: slide-right 5s forwards, wiggle-1 3s linear infinite;
+}
+
+#img-2 {
+  top: 8rem;
+  left: 60%;
+  width: 11rem;
+  animation: slide-left 8s forwards, wiggle-2 3s linear infinite;
+}
+
+@keyframes wiggle-1 {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0, 0.5rem);
+  }
+  50% {
+    transform: translate(0, 0);
+  }
+  75% {
+    transform: translate(0, -0.5rem);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes wiggle-2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0, -0.5rem);
+  }
+  50% {
+    transform: translate(0, 0);
+  }
+  75% {
+    transform: translate(0, 0.5rem);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slide {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -2000px 0;
+  }
+}
+
+@keyframes slide-right {
+  100% {
+    left: 12%;
+  }
+}
+
+@keyframes slide-left {
+  100% {
+    left: 60%;
+  }
+}
+</style>
+<body>
+ 
+<div class="container">
+  <div class="image-placeholder">
+    <img src="https://media.giphy.com/media/Vbn6KMTVvK25b3zqe3/giphy.gif" alt="" id="img-1">
+    <img src="https://media.giphy.com/media/eTRfPmy5StdUa3JE86/giphy.gif" alt="" id="img-2">
+  </div>
+  <div class="content-placeholder">
+    <h1>
+     <b> Sale! Stickerlinebyiton5 </b>
+    </h1>
+    <p>
+ลดราคาตามช่วงเวลาจะเป็นวันศุกร์ ถึง วันอังคารตอน 8.30 น.
+    </p>
+    <div class="card-button" id="btn">
+      
+      <div class="button-content">
+     <a  href="https://google.com" target="_blank">ดูรายละเอียด</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
